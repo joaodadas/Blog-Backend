@@ -4,31 +4,30 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
-import mongoose from "mongoose";
+import connectDatabase from "./helpers/connectDatabase";
+import router from "./router";
+import "dotenv/config";
 
 const app = Express();
+const server = http.createServer(app);
+const PORT = process.env.PORT || 9090;
+const bdUri = process.env.DATABASE_URL as string;
 
-app.use(
-  cors({
-    credentials: true,
-  })
-);
+const cors_options = {
+  origin: true,
+  credentials: true,
+};
+app.use(cors(cors_options));
 
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send({ hi: "there" });
-});
+const server_initiation = async () => {
+  await connectDatabase(bdUri);
+  server.listen(PORT, () => console.log(`Running in http://localhost:${PORT}`));
+};
 
-const server = http.createServer(app);
-const PORT = process.env.PORT || 6000;
+server_initiation();
 
-server.listen(PORT, () => console.log("Running in http://localhost:6000"));
-
-const MONGO_URL =
-  "mongodb+srv://JoaoVitorDadas:xYMknCNMZt5YmnbC@cluster0.asgbwzl.mongodb.net/?retryWrites=true&w=majority";
-mongoose.Promise = Promise;
-mongoose.connect(MONGO_URL);
-mongoose.connection.on("error", (error: Error) => console.log(error));
+app.use("/", router());
