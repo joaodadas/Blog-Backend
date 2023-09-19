@@ -20,7 +20,7 @@ const cors_options = {
 app.use(cors(cors_options));
 
 app.use(compression());
-app.use(cookieParser());
+app.use(cookieParser()); 
 app.use(bodyParser.json());
 
 const server_initiation = async () => {
