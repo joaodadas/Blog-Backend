@@ -1,7 +1,8 @@
 import { Express } from "express";
+import { handleCreateUser } from "../controllers/user.controller";
 
 const userRoutes = (app: Express) => {
-  app.get("/teste", () => console.log("chegou na rota"));
+  app.get("/user", handleCreateUser);
 };
 
 export default userRoutes;
