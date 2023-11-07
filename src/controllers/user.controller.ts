@@ -8,8 +8,6 @@ export async function handleCreateUser(req: Request, res: Response) {
   console.log("Chegou no controller");
 
   try {
-    encryptPassword("sdadasdasdasdasd");
-
     if (!password || !email || !name) {
       return res.status(400).json({ message: "Preencha todos os campos" });
     }
@@ -27,6 +25,14 @@ export async function handleCreateUser(req: Request, res: Response) {
 
     if (password !== passwordConfirmation) {
       return res.status(400).json({ message: "As senhas devem ser iguais" });
+    }
+
+    const hashedPassword = await encryptPassword(String(password));
+
+    if (!hashedPassword) {
+      return res
+        .status(400)
+        .json({ message: "Aalgo deu errado ao criar a conta" });
     }
   } catch (error) {
     return res.status(500).json({ error });
